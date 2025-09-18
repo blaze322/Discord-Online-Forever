@@ -4,24 +4,25 @@ const keep_alive = require('./keep_alive.js');
 
 const bot = new Eris(process.env.token);
 
-console.log("Eris version:", require("eris").version);
-
-bot.on("error", (err) => {
-  console.error(err);
-});
+bot.on("error", (err) => console.error(err));
 
 bot.on("ready", () => {
-  console.log("Bot ready — setting presence.");
-
-  bot.setPresence({
+  // Try setPresence (Eris v0.16+)
+  const presence = {
     status: "online", // "online", "idle", "dnd", "invisible"
-    activities: [
-      {
-        name: "Salut! Ajut la server", // textul care apare
-        type: 0 // 0 = Playing, 1 = Streaming, 2 = Listening, 3 = Watching, 5 = Competing
+    activities: [{ name: "Salut! Ajut la server", type: 0 }]
+  };
+
+  if (typeof bot.setPresence === "function") {
+    bot.setPresence(presence).catch(() => {
+      // fallback to editStatus if setPresence fails
+      if (typeof bot.editStatus === "function") {
+        bot.editStatus(presence.status, { name: presence.activities[0].name, type: presence.activities[0].type });
       }
-    ]
-  }).catch(err => console.error("Eroare la setPresence:", err));
+    });
+  } else if (typeof bot.editStatus === "function") {
+    bot.editStatus(presence.status, { name: presence.activities[0].name, type: presence.activities[0].type });
+  }
 });
 
 bot.connect();
