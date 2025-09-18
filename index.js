@@ -11,7 +11,7 @@ bot.on("ready", () => {
   console.log("Botul este conectat.");
 
   // Setare status simplu (online, idle, dnd, invisible)
-  bot.editStatus("dnd", {
+  bot.editStatus("idle", {
     name: "discord.gg/nitrocheap",
     type: 0 // 0 = Playing, 1 = Streaming, 2 = Listening, 3 = Watching, 5 = Competing
   });
